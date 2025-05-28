@@ -53,6 +53,22 @@ class _FriendsPageState extends State<FriendsPage> {
                 );
               },
             ),
-    );
+            bottomNavigationBar: BottomNavigationBar(
+              items : [
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.chat),
+                  label: 'Chat',
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.group),
+                  label: 'Friends',
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.settings),
+                  label: 'Settings',
+                )
+              ],
+              ),
+            );
   }
 }

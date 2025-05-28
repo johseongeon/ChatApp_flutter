@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'friends_page.dart';
+import 'register_page.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -18,6 +19,15 @@ class LoginPage extends StatelessWidget {
     }
   }
 
+  void _register(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+      builder: (context) => RegisterPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +44,11 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _login(context),
               child: const Text('Login'),
-            )
+            ),
+            ElevatedButton(
+              onPressed: () => _register(context),
+              child: const Text('Register'),
+            ),
           ],
         ),
       ),
