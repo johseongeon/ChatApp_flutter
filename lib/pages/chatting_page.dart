@@ -1,99 +1,113 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ChattingPage extends StatefulWidget {
+class ChatRoomPage extends StatefulWidget {
   final String username;
-  final String roomid;
+  final String roomId;
 
-  const ChattingPage({super.key, required this.username, required this.roomid});
+  const ChatRoomPage({super.key, required this.username, required this.roomId});
 
   @override
-  State<ChattingPage> createState() => _ChattingPageState();
+  State<ChatRoomPage> createState() => _ChatRoomPageState();
 }
 
-class _ChattingPageState extends State<ChattingPage> {
-  List<String> _messages = [];
-  final TextEditingController _messageController = TextEditingController();
-  bool _isLoading = true;
+class _ChatRoomPageState extends State<ChatRoomPage> {
+  late WebSocketChannel channel;
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, dynamic>> messages = [];
 
   @override
   void initState() {
     super.initState();
-    fetchMessages();
-  }
+    channel = IOWebSocketChannel.connect('ws://localhost:8080/ws');
 
-  Future<void> fetchMessages() async {
-    final url = Uri.parse('http://localhost:8081/history?roomid=${widget.roomid}');
-    final response = await http.get(url);
+    // initial join message
+    channel.sink.add(jsonEncode({
+      'username': widget.username,
+      'chat_id': widget.roomId,
+    }));
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+    // listen to incoming messages
+    channel.stream.listen((data) {
+      final msg = jsonDecode(data);
       setState(() {
-        _messages = List<String>.from(data['messages']);
-        _isLoading = false;
+        messages.add(msg);
       });
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-      // 에러 처리
-      debugPrint('Failed to load messages');
-    }
+    });
   }
 
   void _sendMessage() {
-    final message = _messageController.text.trim();
-    if (message.isNotEmpty) {
-      setState(() {
-        _messages.add(message);
-        _messageController.clear();
-      });
+    if (_controller.text.trim().isEmpty) return;
 
-      final Uri uri = Uri.parse('ws://localhost:8080/ws');
-      
-      // 서버에 메시지 전송 로직 추가 필요
-    }
+    channel.sink.add(jsonEncode({'message': _controller.text.trim()}));
+    _controller.clear();
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.username} - ${widget.roomid}')),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
+      appBar: AppBar(title: Text('Chat: ${widget.roomId}')),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                final msg = messages[index];
+                final from = msg['from'] ?? 'unknown';
+                final content = msg['message'] ?? '';
+                final isMe = from == widget.username;
+
+                return Align(
+                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 2),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: isMe ? Colors.blue[200] : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text('$from: $content'),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
               children: [
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(_messages[index]),
-                      );
-                    },
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter your message...',
+                      border: OutlineInputBorder(),
+                    ),
+                    onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          decoration: const InputDecoration(hintText: 'Type a message'),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.send),
-                        onPressed: _sendMessage,
-                      ),
-                    ],
-                  ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: _sendMessage,
+                  color: Colors.blue,
                 ),
               ],
             ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'chatting_page.dart';
 
 class ChatroomsPage extends StatefulWidget {
   final String username;
@@ -8,6 +9,15 @@ class ChatroomsPage extends StatefulWidget {
 
   @override
   State<ChatroomsPage> createState() => _ChatroomsPageState();
+}
+
+void _chatroomPage(BuildContext context, String username, String roomid) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ChatRoomPage(username: username, roomId: roomid),
+    ),
+  );
 }
 
 class _ChatroomsPageState extends State<ChatroomsPage> {
@@ -21,13 +31,13 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
   }
 
   Future<void> fetchChatrooms() async {
-    final url = Uri.parse('http://localhost:8081/getChatrooms?username=${widget.username}');
+    final url = Uri.parse('http://localhost:8082/getRooms?username=${widget.username}');
     final response = await http.get(url);
-
+    
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
-        _chatrooms = List<String>.from(data['chatrooms']);
+        _chatrooms = List<String>.from(data['rooms']);
         _isLoading = false;
       });
     } else {
@@ -51,7 +61,7 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
                 return ListTile(
                   title: Text(_chatrooms[index]),
                   onTap: () {
-                    // 채팅방으로 이동하는 로직 추가 필요
+                    _chatroomPage(context, widget.username, _chatrooms[index]);
                   },
                 );
               },

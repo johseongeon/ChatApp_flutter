@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,10 +23,10 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     if (response.statusCode == 200) {
-      // 성공적으로 등록됨
+      // successfully registered
       Navigator.pop(context);
     } else {
-      // 에러 처리
+      // registration failed
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed')),
       );

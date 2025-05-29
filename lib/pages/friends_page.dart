@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'chatrooms_page.dart';
 
 class FriendsPage extends StatefulWidget {
   final String username;
@@ -13,6 +14,7 @@ class FriendsPage extends StatefulWidget {
 class _FriendsPageState extends State<FriendsPage> {
   List<String> _friends = [];
   bool _isLoading = true;
+  int _selectedIndex = 1; // 기본값은 Friends 탭
 
   @override
   void initState() {
@@ -34,8 +36,32 @@ class _FriendsPageState extends State<FriendsPage> {
       setState(() {
         _isLoading = false;
       });
-      // 에러 처리
       debugPrint('Failed to load friends');
+    }
+  }
+
+  void _chatroomsPage(BuildContext context, String username) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatroomsPage(username: username),
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index == 0) {
+      // Chat 탭이 눌리면 ChatRoomPage로 이동
+      _chatroomsPage(context, widget.username);
+    } else if (index == 2) {
+      // 예시: Settings 탭 눌림
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Settings tapped (not implemented)')),
+      );
     }
   }
 
@@ -53,22 +79,24 @@ class _FriendsPageState extends State<FriendsPage> {
                 );
               },
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              items : [
-                BottomNavigationBarItem(
-                  icon: const Icon(Icons.chat),
-                  label: 'Chat',
-                ),
-                BottomNavigationBarItem(
-                  icon: const Icon(Icons.group),
-                  label: 'Friends',
-                ),
-                BottomNavigationBarItem(
-                  icon: const Icon(Icons.settings),
-                  label: 'Settings',
-                )
-              ],
-              ),
-            );
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: 'Friends',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
   }
 }
