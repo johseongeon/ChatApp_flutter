@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'chatting_page.dart';
+import 'add_group_page.dart';
+import 'friends_page.dart';
 
 class ChatroomsPage extends StatefulWidget {
   final String username;
@@ -23,6 +25,7 @@ void _chatroomPage(BuildContext context, String username, String roomid) {
 class _ChatroomsPageState extends State<ChatroomsPage> {
   List<String> _chatrooms = [];
   bool _isLoading = true;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -31,7 +34,7 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
   }
 
   Future<void> fetchChatrooms() async {
-    final url = Uri.parse('http://localhost:8082/getRooms?username=${widget.username}');
+    final url = Uri.parse('http://192.168.0.12:8082/getRooms?username=${widget.username}');
     final response = await http.get(url);
     
     if (response.statusCode == 200) {
@@ -49,10 +52,49 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
     }
   }
 
+  void _friendsPage(BuildContext context, String username) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FriendsPage(username: username),
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index == 1) {
+      _friendsPage(context, widget.username);
+    } else if (index == 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Settings tapped (not implemented)')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chatrooms')),
+      appBar: AppBar(
+        title: const Text('Chatrooms'),
+        actions: [
+    TextButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddGroupPage(username: widget.username),
+          ),
+        );
+      },
+      child: const Text('채팅방 만들기', style: TextStyle(color: Colors.blue),
+      ),
+    ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
@@ -66,6 +108,24 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
                 );
               },
             ),
+            bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: 'Friends',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:chat_flutter/pages/add_friend_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'chatrooms_page.dart';
@@ -14,7 +15,7 @@ class FriendsPage extends StatefulWidget {
 class _FriendsPageState extends State<FriendsPage> {
   List<String> _friends = [];
   bool _isLoading = true;
-  int _selectedIndex = 1; // 기본값은 Friends 탭
+  int _selectedIndex = 1;
 
   @override
   void initState() {
@@ -23,7 +24,7 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 
   Future<void> fetchFriends() async {
-    final url = Uri.parse('http://localhost:8082/getFriends?username=${widget.username}');
+    final url = Uri.parse('http://192.168.0.12:8082/getFriends?username=${widget.username}');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -55,10 +56,8 @@ class _FriendsPageState extends State<FriendsPage> {
     });
 
     if (index == 0) {
-      // Chat 탭이 눌리면 ChatRoomPage로 이동
       _chatroomsPage(context, widget.username);
     } else if (index == 2) {
-      // 예시: Settings 탭 눌림
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Settings tapped (not implemented)')),
       );
@@ -68,7 +67,23 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Friends')),
+      appBar: AppBar(title: const Text('Friends'),
+      actions: [
+    TextButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddFriendPage(username: widget.username),
+          ),
+        );
+      },
+      child: const Text('친구 추가', style: TextStyle(color: Colors.blue),
+      ),
+    ),
+        ],
+      ),
+      
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(

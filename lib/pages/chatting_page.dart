@@ -21,7 +21,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   void initState() {
     super.initState();
-    channel = IOWebSocketChannel.connect('ws://localhost:8080/ws');
+    channel = IOWebSocketChannel.connect('ws://192.168.0.12:8080/ws');
 
     // initial join message
     channel.sink.add(jsonEncode({

@@ -17,7 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://localhost:8082/register?username=${_usernameController.text}');
+    final url = Uri.parse('http://192.168.0.12:8082/register?username=${_usernameController.text}');
     final response = await http.post(url, body: {
       'username': _usernameController.text,
     });
