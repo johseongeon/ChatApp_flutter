@@ -67,7 +67,9 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Friends'),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Friends'),
       actions: [
     TextButton(
       onPressed: () {

@@ -47,8 +47,6 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
       setState(() {
         _isLoading = false;
       });
-      // 에러 처리
-      debugPrint('Failed to load chatrooms');
     }
   }
 
@@ -79,6 +77,7 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Chatrooms'),
         actions: [
     TextButton(
@@ -90,7 +89,7 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
           ),
         );
       },
-      child: const Text('채팅방 만들기', style: TextStyle(color: Colors.blue),
+      child: const Text('+', style: TextStyle(color: Colors.blue, fontSize: 30),
       ),
     ),
         ],
