@@ -15,7 +15,7 @@ class _AddFriendPage extends State<AddFriendPage> {
   String _responseMessage = '';
 
   Future<void> addFriend(String username, String friend) async {
-    final url = Uri.parse('http://192.168.0.12:8082/addFriend?username=$username&friend=$friend');
+    final url = Uri.parse('http://10.0.2.2:8082/addFriend?username=$username&friend=$friend');
     try {
       final response = await http.get(url);
       setState(() {

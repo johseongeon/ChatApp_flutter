@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import '../widgets/chat_bubble.dart';
 
 class ChatRoomPage extends StatefulWidget {
   final String username;
@@ -27,7 +28,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   Future<void> _fetchChatHistory() async {
-    final response = await http.get(Uri.parse('http://192.168.0.12:8081/history?room_id=${widget.roomId}'));
+    final response = await http.get(Uri.parse('http://10.0.2.2:8081/history?room_id=${widget.roomId}'));
 
     if (response.statusCode == 200) {
       final List<dynamic> history = jsonDecode(response.body);
@@ -40,13 +41,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   'timestamp': msg['timestamp'],
                 }));
       });
-    } else {
-      print('Failed to load chat history');
     }
   }
 
   void _connectWebSocket() {
-    channel = IOWebSocketChannel.connect('ws://192.168.0.12:8080/ws');
+    channel = IOWebSocketChannel.connect('ws://10.0.2.2:8080/ws');
 
     // send join info
     channel.sink.add(jsonEncode({
@@ -76,6 +75,7 @@ void _sendMessage() {
 
   setState(() {
     messages.add({
+      'from': widget.username,
       'message': message,
       'timestamp': DateTime.now().toIso8601String(),
     });
@@ -98,48 +98,24 @@ void _sendMessage() {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final msg = messages[index];
-                final from = msg['from'] ?? 'unknown';
-                final content = msg['message'] ?? '';
-                final isMe = from == widget.username;
+  child: ListView.builder(
+    padding: const EdgeInsets.all(8),
+    itemCount: messages.length,
+    itemBuilder: (context, index) {
+      final msg = messages[index];
+      final from = msg['from'] ?? 'unknown';
+      final content = msg['message'] ?? '';
+      final isMe = from == widget.username;
 
-                return Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.pink[100] : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment:
-                          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          from,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          content,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+      return ChatBubble(
+        sender: from,
+        message: content,
+        isMe: isMe,
+      );
+    },
+  ),
+),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(

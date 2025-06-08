@@ -23,7 +23,7 @@ class _SelectFriendsPageState extends State<SelectFriendsPage> {
   }
 
   Future<void> fetchFriends() async {
-    final url = Uri.parse('http://192.168.0.12:8082/getFriends?username=${widget.username}');
+    final url = Uri.parse('http://10.0.2.2:8082/getFriends?username=${widget.username}');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -53,12 +53,12 @@ class _SelectFriendsPageState extends State<SelectFriendsPage> {
   
   // 선택된 친구들을 roomId에 join
   for (var friend in selectedFriends) {
-    final url = Uri.parse('http://192.168.0.12:8082/joinUser?username=$friend&room_id=$roomId');
+    final url = Uri.parse('http://10.0.2.2:8082/joinUser?username=$friend&room_id=$roomId');
     futures.add(http.get(url));
   }
 
   // 현재 사용자도 방에 join
-  final currentUserUrl = Uri.parse('http://192.168.0.12:8082/joinUser?username=${widget.username}&room_id=$roomId');
+  final currentUserUrl = Uri.parse('http://10.0.2.2:8082/joinUser?username=${widget.username}&room_id=$roomId');
   futures.add(http.get(currentUserUrl));
 
   // 모든 요청 대기

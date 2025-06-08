@@ -13,15 +13,6 @@ class ChatroomsPage extends StatefulWidget {
   State<ChatroomsPage> createState() => _ChatroomsPageState();
 }
 
-void _chatroomPage(BuildContext context, String username, String roomid) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ChatRoomPage(username: username, roomId: roomid),
-    ),
-  );
-}
-
 class _ChatroomsPageState extends State<ChatroomsPage> {
   List<String> _chatrooms = [];
   bool _isLoading = true;
@@ -33,8 +24,17 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
     fetchChatrooms();
   }
 
+  void _chatroomPage(BuildContext context, String username, String roomid) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ChatRoomPage(username: username, roomId: roomid),
+    ),
+  );
+}
+
   Future<void> fetchChatrooms() async {
-    final url = Uri.parse('http://192.168.0.12:8082/getRooms?username=${widget.username}');
+    final url = Uri.parse('http://10.0.2.2:8082/getRooms?username=${widget.username}');
     final response = await http.get(url);
     
     if (response.statusCode == 200) {
@@ -78,7 +78,7 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Chatrooms'),
+        title: const Text('채팅방 목록'),
         actions: [
     TextButton(
       onPressed: () {

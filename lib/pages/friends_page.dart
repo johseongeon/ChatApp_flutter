@@ -24,7 +24,7 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 
   Future<void> fetchFriends() async {
-    final url = Uri.parse('http://192.168.0.12:8082/getFriends?username=${widget.username}');
+    final url = Uri.parse('http://10.0.2.2:8082/getFriends?username=${widget.username}');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -69,7 +69,7 @@ class _FriendsPageState extends State<FriendsPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Friends'),
+        title: const Text('친구 목록'),
       actions: [
     TextButton(
       onPressed: () {

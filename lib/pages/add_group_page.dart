@@ -23,7 +23,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
   void _goToSelectFriends() {
     String roomId = _roomIdController.text.trim();
     if (roomId.isNotEmpty) {
-      final url = Uri.parse('http://192.168.0.12:8082/createRoom?room_id=${_roomIdController.text}');
+      final url = Uri.parse('http://10.0.2.2:8082/createRoom?room_id=${_roomIdController.text}');
       http.post(url, body: {
       'room_id': roomId,
     });
@@ -61,32 +61,6 @@ class _AddGroupPageState extends State<AddGroupPage> {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [Colors.purpleAccent, Colors.blue],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: CircleAvatar(
-                        radius: 14,
-                        backgroundColor: Colors.blue,
-                        child: const Icon(Icons.edit, size: 16, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -97,8 +71,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
                         controller: _roomIdController,
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontWeight: FontWeight.bold),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
+                        decoration: const InputDecoration(labelText: '채팅방 이름 입력'
                         ),
                       ),
                     ),
