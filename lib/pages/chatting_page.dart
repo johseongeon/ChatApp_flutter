@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../widgets/chat_bubble.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChatRoomPage extends StatefulWidget {
   final String username;
@@ -19,6 +20,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   late WebSocketChannel channel;
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, dynamic>> messages = [];
+  String? serverUrl = dotenv.env['CHAT_SERVER_URL'];
 
   @override
   void initState() {

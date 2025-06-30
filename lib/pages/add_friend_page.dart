@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'friends_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AddFriendPage extends StatefulWidget {
   final String username;
@@ -13,9 +14,10 @@ class AddFriendPage extends StatefulWidget {
 class _AddFriendPage extends State<AddFriendPage> {
   final TextEditingController _usernameController = TextEditingController();
   String _responseMessage = '';
+  String? serverUrl = dotenv.env['CHAT_SERVER_URL'];
 
   Future<void> addFriend(String username, String friend) async {
-    final url = Uri.parse('http://10.0.2.2:8082/addFriend?username=$username&friend=$friend');
+    final url = Uri.parse('$serverUrl:8082/addFriend?username=$username&friend=$friend');
     try {
       final response = await http.get(url);
       setState(() {

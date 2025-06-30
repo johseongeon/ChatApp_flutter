@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RegisterPage extends StatefulWidget{
   const RegisterPage({super.key});
@@ -11,6 +12,7 @@ class RegisterPage extends StatefulWidget{
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   bool _isLoading = false;
+  String? serverUrl = dotenv.env['CHAT_SERVER_URL'];
 
   Future<void> _register() async {
     setState(() {

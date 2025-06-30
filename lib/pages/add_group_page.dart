@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'select_friends_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AddGroupPage extends StatefulWidget {
   final String username;
@@ -13,6 +14,7 @@ class AddGroupPage extends StatefulWidget {
 
 class _AddGroupPageState extends State<AddGroupPage> {
   final TextEditingController _roomIdController = TextEditingController(text: '');
+  String? serverUrl = dotenv.env['CHAT_SERVER_URL'];
 
   @override
   void dispose() {

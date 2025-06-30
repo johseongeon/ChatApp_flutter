@@ -3,6 +3,7 @@ import 'package:chat_flutter/pages/add_friend_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'chatrooms_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FriendsPage extends StatefulWidget {
   final String username;
@@ -16,6 +17,7 @@ class _FriendsPageState extends State<FriendsPage> {
   List<String> _friends = [];
   bool _isLoading = true;
   int _selectedIndex = 1;
+  String? serverUrl = dotenv.env['CHAT_SERVER_URL'];
 
   @override
   void initState() {

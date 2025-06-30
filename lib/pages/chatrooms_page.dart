@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'chatting_page.dart';
 import 'add_group_page.dart';
 import 'friends_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChatroomsPage extends StatefulWidget {
   final String username;
@@ -17,6 +18,7 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
   List<String> _chatrooms = [];
   bool _isLoading = true;
   int _selectedIndex = 0;
+  String? serverUrl = dotenv.env['CHAT_SERVER_URL'];
 
   @override
   void initState() {
@@ -34,7 +36,7 @@ class _ChatroomsPageState extends State<ChatroomsPage> {
 }
 
   Future<void> fetchChatrooms() async {
-    final url = Uri.parse('http://10.0.2.2:8082/getRooms?username=${widget.username}');
+    final url = Uri.parse('$serverUrl:8082/getRooms?username=${widget.username}');
     final response = await http.get(url);
     
     if (response.statusCode == 200) {
